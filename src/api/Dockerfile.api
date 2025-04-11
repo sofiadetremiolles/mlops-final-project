@@ -16,6 +16,7 @@ EXPOSE 8000
 
 # Set environment variables
 ENV DSBA_MODELS_ROOT_PATH=/app/models
+ENV DSBA_REPORTS_ROOT_PATH=/app/reports
 
 # Define the default command run when starting the container: Run the FastAPI app using Uvicorn
 CMD ["uvicorn", "src.api.api:app", "--host", "0.0.0.0", "--port", "8000"]

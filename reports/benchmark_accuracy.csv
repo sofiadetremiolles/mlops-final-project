@@ -1,0 +1,2 @@
+model_id,description,metric,score
+titanic_model,,accuracy,0.7374301675977654

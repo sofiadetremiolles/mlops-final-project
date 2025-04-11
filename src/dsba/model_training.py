@@ -7,12 +7,12 @@ The MLOps course is not about model training.
 from dataclasses import dataclass
 import logging
 import pandas as pd
-import xgboost as xgb
 from datetime import datetime
+from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.base import ClassifierMixin, RegressorMixin
 
 from dsba.model_registry import ClassifierMetadata
-from .preprocessing import split_features_and_target, preprocess_dataframe
+from dsba.preprocessing import split_features_and_target, preprocess_dataframe
 
 
 def train_simple_classifier(
@@ -21,7 +21,7 @@ def train_simple_classifier(
     logging.info("Start training a simple classifier")
     df = preprocess_dataframe(df)
     X, y = split_features_and_target(df, target_column)
-    model = xgb.XGBClassifier(random_state=42)
+    model = HistGradientBoostingClassifier(random_state=42)
     model.fit(X, y)
 
     logging.info("Done training a simple classifier")

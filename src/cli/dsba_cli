@@ -12,6 +12,8 @@ from pathlib import Path
 from dsba.data_ingestion import load_csv_from_path, write_csv_to_path
 from dsba.model_registry import list_models_ids, load_model, load_model_metadata
 from dsba.model_prediction import classify_dataframe
+from dsba.experiment import run_experiment
+from dsba.benchmark import report_benchmark
 
 logging.basicConfig(
     level=logging.INFO,
@@ -25,7 +27,7 @@ def create_parser():
     We use the library argparse to define the functionalities of our CLI,
     it will also do the magic to turn the command line typed by the user into an easy to use python object.
 
-    We want to define a commend line that does
+    We want to define a command line that does
     dsba_cli [command] [options]
     """
     parser = argparse.ArgumentParser(description="DSBA Plaftorm CLI Tool")
@@ -39,6 +41,16 @@ def create_parser():
     predict_parser.add_argument("--model", help="Model name to use", required=True)
     predict_parser.add_argument("--input", help="Input file path", required=True)
     predict_parser.add_argument("--output", help="Output file path", required=True)
+
+    # Run command (it requires an input url, a target column and a model name)
+    run_experiment_parser = subparsers.add_parser("run", help="Run experiment")
+    run_experiment_parser.add_argument("--input", help="Input URL for data", required=True)
+    run_experiment_parser.add_argument("--target", help="Target column name in data", required=True)
+    run_experiment_parser.add_argument("--model", help="Model name to use", required=True)
+
+    # Report command (it requires a performance metric name)
+    report_parser = subparsers.add_parser("report", help="Report benchmark")
+    report_parser.add_argument("--metric", help="Performance metric to benchmark on")
 
     return parser
 
@@ -54,10 +66,13 @@ def main():
         list_models()
     elif args.command == "predict":
         predict(args.model, args.input, args.output)
+    elif args.command == "run":
+        run(args.input, args.target, args.model)
+    elif args.command == "report":
+        report(args.metric)
 
 
 # We create a few light wrappers around our platform functionalities, just collect inputs and print the results.
-
 
 def list_models() -> None:
     models = list_models_ids()
@@ -73,6 +88,20 @@ def predict(model_id: str, input_file: str, output_file: str) -> None:
     predictions = classify_dataframe(model, df, metadata.target_column)
     write_csv_to_path(predictions, output_file)
     print(f"Scored {len(predictions)} records")
+
+
+def run(input_url: str, target_column: str, model_id: str) -> None:
+    metadata = run_experiment(input_url, target_column, model_id)
+    print("Performance Metrics:")
+    print(f"  Accuracy: {metadata.performance_metrics['accuracy']:.2f}")
+    print(f"  Precision: {metadata.performance_metrics['precision']:.2f}")
+    print(f"  Recall: {metadata.performance_metrics['recall']:.2f}")
+    print(f"  F1 Score: {metadata.performance_metrics['f1_score']:.2f}")
+
+
+def report(metric: str) -> None:
+    df = report_benchmark(metric)
+    print(df)
 
 
 if __name__ == "__main__":

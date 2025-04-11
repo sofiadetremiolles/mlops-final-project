@@ -73,9 +73,9 @@ This will run all the tests in the `tests` folder.
 
 ## Usage
 
-You must set the environment variable `DSBA_MODELS_ROOT_PATH` to the address you want to store the models in before you can use the platform.
+You must set the environment variables `DSBA_MODELS_ROOT_PATH` and `DSBA_REPORTS_ROOT_PATH` to the addresses you want to respectively store the models and reports in before you can use the platform.
 
-For example as a MacOS user I set `/Users/joachim/dev/dsba/models_registry`.
+For example as a MacOS user I set `/Users/sofia/dev/dsba/models` and `/Users/sofia/dev/dsba/reports`.
 
 There are many ways to set environment variables depending on the context.
 
@@ -97,6 +97,7 @@ For windows, something of the sort may work:
 ```bash
 set DSBA_MODELS_ROOT_PATH="C:\path\to\your\models"
 ```
+Don't forget to do the same for DSBA_REPORTS_ROOT_PATH and you are all set
 
 ## CLI
 
@@ -112,14 +113,45 @@ Use a model to predict on a file:
 src/cli/dsba_cli predict --input /path/to/your/data/file.csv --output /path/to/your/output/file.csv --model-id your_model_id
 ```
 
+Run an experiment training and testing a model with a dataset
+
+```bash
+src/cli/dsba_cli run --input "https://raw.githubusercontent.com/datasciencedojo/datasets/refs/heads/master/titanic.csv" --target "Survived" --model-id "titanic_model"
+```
+
+Generate a report that benchmarks trained models on a specified performance metric
+
+```bash
+src/cli/dsba_cli report --metric "accuracy"
+```
+
 ### Notebook
 
-...
+To visualize some results and get an idea of how to use main ML functions
 
 ### API
 
-...
+Run API
+```bash
+uvicorn src.api.api:app --reload
+```
+
+Open browser and connect to http://127.0.0.1:8000/docs
+Play around!
 
 ### Dockerized API
 
-...
+To use the Dockerized API you do not even need prior steps besides cloning the repo and opening Docker
+
+Build the Docker image
+```bash
+docker build -t dsba-mlops-app -f src/api/Dockerfile.api .
+```
+
+Run API
+```bash
+docker run -p 8000:8000 dsba-mlops-app
+```
+
+Open browser and connect to http://localhost:8000/docs
+Play around!

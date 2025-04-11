@@ -9,6 +9,10 @@ authors = [{ name = "Joachim", email = "joachim@joachim.website" }]
 
 
 dependencies = [
+    # Missing depedencies in the original list
+    "python-dotenv==1.1.0",
+    "pytest==8.3.5",
+    # Original dependencies
     "fastapi>=0.115.7",
     "matplotlib>=3.10.0",
     "numpy>=1.24.0",
